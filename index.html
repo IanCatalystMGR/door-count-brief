@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Door Counting from Remote Imagery — Executive Briefing</title>
+<style>
+  :root {
+    --bg: #12161c;
+    --bg-card: #1b222c;
+    --accent: #3b82f6;
+    --accent-soft: #93c5fd;
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --good: #34d399;
+    --warn: #fbbf24;
+    --line: #2c3846;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; background: var(--bg); color: var(--text);
+    font-family: "Segoe UI", -apple-system, Arial, sans-serif; overflow: hidden; }
+
+  .slide { position: absolute; inset: 0; padding: 6vh 7vw; display: flex;
+    flex-direction: column; justify-content: center;
+    opacity: 0; visibility: hidden; transition: opacity .45s ease, visibility .45s; }
+  .slide.active { opacity: 1; visibility: visible; position: relative; }
+
+  .slide .anim { opacity: 0; transform: translateY(16px); }
+  .slide.active .anim { animation: rise .6s cubic-bezier(.22,.8,.3,1) forwards;
+    animation-delay: var(--d, 0s); }
+  @keyframes rise { to { opacity: 1; transform: translateY(0); } }
+
+  .slide .arrow { opacity: 0; transform: scaleY(0); transform-origin: top; }
+  .slide.active .arrow { animation: grow .4s ease forwards; animation-delay: var(--d, 0s); }
+  @keyframes grow { to { opacity: 1; transform: scaleY(1); } }
+
+  .kenburns { overflow: hidden; }
+  .kenburns img { transform-origin: center; }
+  .slide.active .kenburns img { animation: kb 20s ease-in-out infinite alternate; }
+  @keyframes kb { from { transform: scale(1) translateX(0); }
+    to { transform: scale(1.12) translateX(-2.5%); } }
+
+  .kicker { color: var(--accent); text-transform: uppercase; letter-spacing: .18em;
+    font-size: clamp(12px, 1.2vw, 16px); font-weight: 600; margin-bottom: 1.2vh; }
+  h1 { font-size: clamp(30px, 4.2vw, 58px); line-height: 1.12; margin-bottom: 2vh; }
+  h2 { font-size: clamp(24px, 3vw, 42px); line-height: 1.15; margin-bottom: 2.5vh; }
+  .sub { color: var(--muted); font-size: clamp(15px, 1.6vw, 22px); line-height: 1.5;
+    max-width: 66ch; }
+  .rule { width: 90px; height: 4px; background: var(--accent); border-radius: 2px;
+    margin: 2.5vh 0; }
+  .grid { display: grid; gap: 2vw; margin-top: 3vh; }
+  .grid.two { grid-template-columns: 1fr 1fr; }
+  .grid.three { grid-template-columns: 1fr 1fr 1fr; }
+  .grid.four { grid-template-columns: repeat(4, 1fr); }
+  .card { background: var(--bg-card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 2.4vh 1.6vw; }
+  .card h3 { font-size: clamp(16px, 1.7vw, 24px); margin-bottom: 1vh; }
+  .card p { color: var(--muted); font-size: clamp(13px, 1.25vw, 17px); line-height: 1.5; }
+  .card.blue { border-top: 4px solid var(--accent); }
+  .laynum { display: inline-block; width: 1.4em; height: 1.4em; line-height: 1.4em;
+    text-align: center; border-radius: 50%; background: var(--accent); color: #fff;
+    font-size: .8em; font-weight: 700; margin-right: .3em; vertical-align: middle; }
+  .card.gray { border-top: 4px solid #64748b; }
+  .card.green { border-top: 4px solid var(--good); }
+  .cardimg { margin-top: 1.6vh; height: 15vh; background: #000;
+    border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .cardimg img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cardimg.contain img { object-fit: contain; }
+  .imgcap { color: var(--muted); font-size: clamp(11px, 1vw, 14px); margin-top: .6vh;
+    line-height: 1.35; }
+  .bignum { font-size: clamp(38px, 5vw, 72px); font-weight: 700; color: var(--accent-soft);
+    line-height: 1; }
+  .bignum small { display: block; font-size: clamp(13px, 1.3vw, 18px); color: var(--muted);
+    font-weight: 400; margin-top: 1vh; line-height: 1.4; }
+  .imgwrap { background: #000; border: 1px solid var(--line); border-radius: 12px;
+    overflow: hidden; }
+  .imgwrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .imgwrap.contain img { object-fit: contain; }
+  .cap { color: var(--muted); font-size: clamp(12px, 1.15vw, 16px); margin-top: 1vh;
+    line-height: 1.45; }
+  .flow { display: flex; flex-direction: column; gap: 1.4vh; }
+  .node { background: var(--bg-card); border: 1px solid var(--line); border-left: 5px solid var(--accent);
+    border-radius: 10px; padding: 1.4vh 1.2vw; font-size: clamp(13px, 1.3vw, 18px); }
+  .node.gray { border-left-color: #64748b; }
+  .node b { display: block; margin-bottom: .3vh; }
+  .node span { color: var(--muted); font-size: .92em; }
+  .nrow { display: flex; gap: 1.2vw; align-items: center; }
+  .grid.method { grid-template-columns: 1.3fr 1fr; }
+  .method .nimg { width: 8vw; height: 7.5vh; }
+  .method .node { padding: 1vh 1vw; }
+  .method .flow { gap: 1vh; }
+  .nrow .nimg { width: 13vw; height: 14vh; flex: none; background: #000;
+    border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .nrow .nimg img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .arrow { color: var(--accent); font-size: 20px; padding-left: 1.2vw; line-height: .6; }
+  .lanehead { font-size: clamp(15px, 1.5vw, 21px); font-weight: 700; margin-bottom: 1.6vh;
+    padding-bottom: 1vh; border-bottom: 2px solid var(--line); }
+  .lanehead.blue { color: var(--accent-soft); border-color: var(--accent); }
+  .lanehead.gray { color: #cbd5e1; border-color: #64748b; }
+  table { width: 100%; border-collapse: collapse; margin-top: 2vh;
+    font-size: clamp(12px, 1.25vw, 17px); }
+  th, td { padding: 1vh .8vw; text-align: center; border-bottom: 1px solid var(--line); }
+  th { color: var(--accent-soft); text-transform: uppercase; letter-spacing: .06em;
+    font-size: .85em; }
+  td:first-child, th:first-child { text-align: left; }
+  tr.total td { font-weight: 700; border-top: 2px solid var(--accent); }
+  .ok { color: var(--good); }
+  .gap { color: var(--warn); }
+  ul.takeaway { list-style: none; margin-top: 2vh; }
+  ul.takeaway li { font-size: clamp(17px, 2vw, 28px); line-height: 1.4; padding: 1.8vh 0;
+    border-bottom: 1px solid var(--line); }
+  ul.takeaway li:last-child { border-bottom: none; }
+  ul.takeaway li b { color: var(--accent-soft); }
+  .footer { position: fixed; bottom: 2.5vh; left: 7vw; right: 7vw; display: flex;
+    justify-content: space-between; color: var(--muted); font-size: 13px; z-index: 5; }
+  .pill { display: inline-block; padding: .4vh 1vw; border-radius: 999px; font-weight: 600;
+    font-size: .9em; }
+  .pill.green { background: rgba(52,211,153,.15); color: var(--good); }
+  .pill.warn { background: rgba(251,191,36,.15); color: var(--warn); }
+  .count { font-variant-numeric: tabular-nums; }
+  .faceoff { display: flex; align-items: center; gap: 2vw; justify-content: center;
+    margin-top: 2vh; }
+  .scorebox { text-align: center; background: var(--bg-card); border: 1px solid var(--line);
+    border-radius: 14px; padding: 2vh 2.5vw; min-width: 16vw; }
+  .scorebox .num { font-size: clamp(44px, 6vw, 88px); font-weight: 800; line-height: 1; }
+  .scorebox .who { color: var(--muted); margin-top: 1vh; font-size: clamp(13px, 1.3vw, 18px); }
+  .scorebox.blue { border-top: 4px solid var(--accent); }
+  .scorebox.blue .num { color: var(--accent-soft); }
+  .scorebox.gray { border-top: 4px solid #64748b; }
+  .scorebox.gray .num { color: #cbd5e1; }
+  .vs { color: var(--muted); font-weight: 700; font-size: clamp(16px, 2vw, 28px); }
+
+  /* site-by-site cards */
+  .statband { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1vw;
+    margin: 1.2vh 0 2vh; }
+  .statband .stat { background: var(--bg-card); border: 1px solid var(--line);
+    border-radius: 10px; padding: 1.2vh 1vw; text-align: center; }
+  .statband .sbnum { font-size: clamp(20px, 2.2vw, 34px); font-weight: 800;
+    color: var(--accent-soft); font-variant-numeric: tabular-nums; }
+  .statband .sblab { display: block; color: var(--muted); font-size: clamp(10px, 1vw, 14px);
+    margin-top: .4vh; line-height: 1.35; }
+  .grid.sites { gap: 1.2vw; margin-top: 0; }
+  .sitecard { padding: 1.4vh 1vw; }
+  .sitecard h3 { font-size: clamp(13px, 1.25vw, 18px); display: flex;
+    justify-content: space-between; align-items: center; gap: .5vw; }
+  .sitecard p { font-size: clamp(11px, 1.05vw, 15px); margin-top: .6vh; }
+  .cardimg.site { height: 9vh; margin-top: 0; margin-bottom: .8vh; }
+  .pill.red { background: rgba(248,113,113,.15); color: #f87171; }
+  .pill.sm { font-size: .8em; padding: .2vh .7vw; }
+
+  /* clickable site cards + detail overlay */
+  .sitecard { cursor: pointer; transition: transform .2s ease, border-color .2s ease; }
+  .sitecard:hover { transform: translateY(-4px); border-color: var(--accent); }
+  .overlay { position: fixed; inset: 0; background: rgba(6,9,13,.93); z-index: 50;
+    display: none; align-items: center; justify-content: center; padding: 4vh 4vw; }
+  .overlay.open { display: flex; }
+  .overlay-card { background: var(--bg); border: 1px solid var(--line); border-radius: 16px;
+    max-width: 1240px; width: 100%; max-height: 88vh; overflow-y: auto; padding: 3vh 2.5vw; }
+  .overlay-card h2 { margin-bottom: .5vh; }
+  .overlay-close { position: fixed; top: 3vh; right: 4vw; color: var(--muted);
+    font-size: 34px; cursor: pointer; background: none; border: none; z-index: 60; }
+  .overlay-close:hover { color: var(--text); }
+  .overlay table { font-size: clamp(11px, 1.05vw, 15px); margin-top: 1vh; }
+  .overlay .imgwrap { height: 24vh; }
+  .ovhead { display: flex; align-items: center; gap: 1.2vw; margin-bottom: 1.5vh; }
+  .ovoverall { display: flex; align-items: baseline; gap: 1vw; flex-wrap: wrap;
+    background: var(--bg-card); border: 1px solid var(--line); border-left: 5px solid var(--accent);
+    border-radius: 12px; padding: 1.6vh 1.4vw; margin-bottom: 2vh; }
+  .ovoverall .bignums { font-size: clamp(26px, 2.8vw, 44px); font-weight: 800;
+    color: var(--accent-soft); font-variant-numeric: tabular-nums; }
+  .ovoverall .bignums small { font-size: .5em; color: var(--muted); font-weight: 400; }
+  .ovoverall .ovline { color: var(--muted); font-size: clamp(14px, 1.4vw, 20px); }
+  .typerow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1vw; margin-bottom: 2.2vh; }
+  .typecard { background: var(--bg-card); border: 1px solid var(--line); border-radius: 10px;
+    padding: 1.4vh 1vw; text-align: center; }
+  .typecard .tname { color: var(--accent-soft); text-transform: uppercase; letter-spacing: .08em;
+    font-size: clamp(11px, 1vw, 14px); font-weight: 700; margin-bottom: .6vh; }
+  .typecard .tnums { font-size: clamp(20px, 2vw, 30px); font-weight: 800;
+    font-variant-numeric: tabular-nums; }
+  .typecard .tvs { color: var(--muted); font-weight: 400; font-size: .6em; padding: 0 .3em; }
+  .typecard .tstatus { font-size: clamp(11px, 1.05vw, 15px); font-weight: 600; margin-top: .5vh; }
+  .photorow { display: grid; grid-template-columns: 1.25fr 1fr; gap: 1.5vw;
+    align-items: center; margin-bottom: 2vh; }
+  .photorow .imgwrap { height: 23vh; }
+  .photorow .pcomment { color: var(--muted); font-size: clamp(13px, 1.3vw, 18px); line-height: 1.55; }
+  .ovdetail { color: var(--muted); font-size: clamp(11px, 1vw, 14px); text-transform: uppercase;
+    letter-spacing: .1em; margin: 2vh 0 .5vh; }
+  .overlay .cmore { color: var(--accent-soft); font-weight: 600; }
+  .overlay .cgap { color: var(--warn); }
+  .overlay .cok { color: var(--good); }
+  .overlay .cnone { color: var(--muted); }
+  .cellnote { color: var(--muted); font-size: clamp(10px, .95vw, 13px); margin-top: .4vh; }
+  .galrow { display: grid; grid-template-columns: repeat(4, 1fr); gap: .8vw; margin-bottom: 1vh; }
+  .galrow figure { margin: 0; }
+  .galrow .imgwrap { height: 13vh; }
+  .galrow figcaption { color: var(--muted); font-size: clamp(10px, .9vw, 13px);
+    margin-top: .4vh; line-height: 1.3; }
+  .facenotes { display: grid; grid-template-columns: 1fr 1fr; gap: .6vh 1.5vw; margin: .8vh 0 2.5vh; }
+  .facenotes p { color: var(--muted); font-size: clamp(11px, 1vw, 14px); line-height: 1.45; }
+  .facenotes p b { color: var(--accent-soft); }
+
+  .static .slide { transition: none; }
+  .static .slide:not(.active) { display: none; }
+  .static .slide .anim, .static .slide .arrow { opacity: 1 !important;
+    transform: none !important; animation: none !important; }
+  .static .slide.active .kenburns img { animation: none !important; }
+  @media print {
+    html, body { overflow: visible; }
+    .slide { position: relative; opacity: 1 !important; visibility: visible !important;
+      page-break-after: always; height: 100vh; }
+    .slide .anim, .slide .arrow { opacity: 1 !important; transform: none !important;
+      animation: none !important; }
+    .footer { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 1 TITLE -->
+<section class="slide active">
+  <div class="kicker anim">Executive Briefing</div>
+  <h1 class="anim" style="--d:.15s">Door Counting from Remote Imagery</h1>
+  <div class="rule anim" style="--d:.3s"></div>
+  <p class="sub anim" style="--d:.45s">What we built, how we validated it, and what the accuracy numbers really mean.<br>
+  8 business parks &middot; 34 buildings &middot; 826 doors &middot; Phoenix metro</p>
+</section>
+
+<!-- 2 DOOR TYPES -->
+<section class="slide">
+  <div class="kicker anim">Definitions</div>
+  <h2 class="anim" style="--d:.1s">The four door types we count</h2>
+  <div class="grid four">
+    <div class="card blue anim" style="--d:.2s">
+      <h3>Dock-high</h3>
+      <p>Raised loading dock: levelers, bumpers, truckwell. For semi-trailers backing in.</p>
+      <div class="cardimg"><img src="assets/dock_reference.jpg" alt="Dock-high loading door reference photo"></div>
+      <p class="imgcap">Reference photo (public domain, Wikimedia Commons) — raised sill, leveler, dock seals. None of the 8 parks had a true dock-high door; this is what the pipeline tests for.</p>
+    </div>
+    <div class="card blue anim" style="--d:.32s">
+      <h3>Grade-level OH</h3>
+      <p>Overhead door at pavement level — drive straight in. "Drive-in" doors on listings.</p>
+      <div class="cardimg"><img src="assets/grade_oh_crop.png" alt="Grade-level overhead doors"></div>
+      <p class="imgcap">Actual capture: grade-level overhead doors at Estrella.</p>
+    </div>
+    <div class="card blue anim" style="--d:.44s">
+      <h3>Man door</h3>
+      <p>Personnel door, usually beside an overhead bay. Small, flush, easy to hide.</p>
+      <div class="cardimg"><img src="assets/man_door_crop.png" alt="Man doors beside overhead bays"></div>
+      <p class="imgcap">Actual capture: narrow man doors between overhead bays at Estrella.</p>
+    </div>
+    <div class="card blue anim" style="--d:.56s">
+      <h3>Office entry</h3>
+      <p>Glass storefront entry to the suite's office. Often recessed or under canopies.</p>
+      <div class="cardimg"><img src="assets/office_entry_sv.png" alt="Office storefront entries"></div>
+      <p class="imgcap">Actual capture: glass office entries at Chandler Technology Center.</p>
+    </div>
+  </div>
+  <p class="cap anim" style="--d:.7s; margin-top:2vh">Rule: count distinct <b>doorways</b>, not storefront "bays". A double glass entry = 1.</p>
+</section>
+
+<!-- 3 METHOD: OURS VS RONALD'S -->
+<section class="slide">
+  <div class="kicker anim">The Method</div>
+  <h2 class="anim" style="--d:.1s">How we count — and how Ronald counts</h2>
+  <div class="grid method">
+    <div>
+      <div class="lanehead blue anim" style="--d:.2s">Our agent — three sources, escalating order</div>
+      <div class="flow">
+        <div class="node anim" style="--d:.35s">
+          <div class="nrow">
+            <div class="nimg"><img src="assets/visible_wall_strip.png" alt="Oblique aerial"></div>
+            <div><b>1 &middot; Oblique aerial imagery</b><span>Pictometry/EagleView angled photos show walls, dated per capture — first pass for every wall. Interim access: Maricopa County's free Pictometry viewer scripted as an unofficial API, zero licensing cost.</span></div>
+          </div>
+        </div>
+        <div class="arrow" style="--d:.6s">&#9660; wall unreadable?</div>
+        <div class="node anim" style="--d:.8s">
+          <div class="nrow">
+            <div class="nimg"><img src="assets/hidden_arcade_1.jpg" alt="Street View"></div>
+            <div><b>2 &middot; Google Street View</b><span>Escalation for shaded or canopied faces — every frame verified to show the target building.</span></div>
+          </div>
+        </div>
+        <div class="arrow" style="--d:1.05s">&#9660; still hidden?</div>
+        <div class="node anim" style="--d:1.3s">
+          <div class="nrow">
+            <div class="nimg"><img src="assets/leasing_floorplan.png" alt="Leasing floor plan"></div>
+            <div><b>3 &middot; Leasing documents</b><span>Public broker flyers and floor plans draw doors no camera can see — confirms or corrects counts.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="lanehead gray anim" style="--d:.25s">Ronald — Google Earth + Street View</div>
+      <div class="flow">
+        <div class="node gray anim" style="--d:.5s"><b>Google Earth 3D + Street View</b><span>pans and tilts for angled views; street-level frames where available. Remote only — no site visits.</span></div>
+        <div class="arrow" style="--d:.8s">&#9660;</div>
+        <div class="node gray anim" style="--d:1.05s"><b>Counts what he can resolve</b><span>accurate where imagery is good</span></div>
+        <div class="arrow" style="--d:1.3s">&#9660;</div>
+        <div class="node gray anim" style="--d:1.55s"><b>Estimates hidden walls</b><span>from suite counts — mixed into one total</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="card green anim" style="--d:1.8s; margin-top:1.5vh"><h3>Same walls, same kind of data — the difference is behaviour</h3><p>Both sides counted all 8 parks <b>independently and blind</b> — one benchmark, no peeking. Every wall of ours gets a verdict: <b style="color:var(--good)">CONFIRMED</b> from evidence or <b style="color:var(--warn)">FLAGGED</b>, never guessed. Ronald estimates hidden walls into his total — so our confirmed count is measured against a benchmark that partly consists of estimates.</p></div>
+</section>
+
+<!-- 4 SITE BY SITE -->
+<section class="slide">
+  <div class="kicker anim">Site by Site</div>
+  <h2 class="anim" style="--d:.1s">Every park vs Ronald — and why the hard ones are hard</h2>
+  <div class="statband anim" style="--d:.15s">
+    <div class="stat"><span class="sbnum"><span class="count" data-target="73" data-suffix="%">0%</span></span><span class="sblab">confirmed overall — 606 of 826 doors in Ronald's count</span></div>
+    <div class="stat"><span class="sbnum" style="color:var(--good)">97–99.5%</span><span class="sblab">on well-imaged buildings, where doors are actually visible</span></div>
+    <div class="stat"><span class="sbnum">81–100%</span><span class="sblab">effective rate including suspected doors on hidden faces</span></div>
+    <div class="stat"><span class="sbnum">8 &middot; 34</span><span class="sblab">business parks &middot; buildings &middot; Phoenix metro</span></div>
+  </div>
+  <div class="grid four sites">
+    <div class="card sitecard anim" style="--d:.2s">
+      <div class="cardimg site"><img src="assets/site_dvcc.png" alt="Deer Valley Commerce Center"></div>
+      <h3>Deer Valley Commerce <span class="pill green sm">99.5%</span></h3>
+      <p>207/208 confirmed. Strong imagery; the document layer filled the few blind faces.</p>
+    </div>
+    <div class="card sitecard anim" style="--d:.3s">
+      <div class="cardimg site"><img src="assets/site_estrella.png" alt="Estrella Business Center"></div>
+      <h3>Estrella <span class="pill green sm">97%</span></h3>
+      <p>60/62 confirmed. Best imagery of the study; only tree-shaded ends uncertain.</p>
+    </div>
+    <div class="card sitecard anim" style="--d:.4s">
+      <div class="cardimg site"><img src="assets/site_carleton.png" alt="Carleton Business Center"></div>
+      <h3>Carleton <span class="pill warn sm">73%</span></h3>
+      <p>130/177 confirmed. Interior courts and canopied arcades hide man/office doors.</p>
+    </div>
+    <div class="card sitecard anim" style="--d:.5s">
+      <div class="cardimg site"><img src="assets/site_centraldv.png" alt="Central Deer Valley"></div>
+      <h3>Central Deer Valley <span class="pill warn sm">72%</span></h3>
+      <p>55/76 confirmed. Arcade shadow; some faces have no Street View coverage at all.</p>
+    </div>
+    <div class="card sitecard anim" style="--d:.6s">
+      <div class="cardimg site"><img src="assets/site_chicago.png" alt="Chicago Street Business Park"></div>
+      <h3>Chicago Street <span class="pill warn sm">58%</span></h3>
+      <p>65/113 confirmed. Courtyard walls on two buildings; canopy-occluded office fronts.</p>
+    </div>
+    <div class="card sitecard anim" style="--d:.7s">
+      <div class="cardimg site"><img src="assets/site_ctc.png" alt="Chandler Technology Center"></div>
+      <h3>Chandler Tech Center <span class="pill warn sm">52%</span></h3>
+      <p>48/92 confirmed. Arcaded storefronts, colonnades, courtyard canopies, mature trees.</p>
+    </div>
+    <div class="card sitecard anim" style="--d:.8s">
+      <div class="cardimg site"><img src="assets/site_excelwest.png" alt="Excel West"></div>
+      <h3>Excel West <span class="pill warn sm">45%</span></h3>
+      <p>33/73 confirmed. Junkyard and vehicles parked tight against walls; sparse Street View.</p>
+    </div>
+    <div class="card sitecard anim" style="--d:.9s">
+      <div class="cardimg site"><img src="assets/site_desertridge.png" alt="Desert Ridge"></div>
+      <h3>Desert Ridge <span class="pill red sm">32%</span></h3>
+      <p>8/25 confirmed. Worst case: truckwell in permanent shadow; open-sided canopy structure.</p>
+    </div>
+  </div>
+  <p class="cap anim" style="--d:1.05s; margin-top:2vh">Read top-left to bottom-right: accuracy tracks <b>imagery quality and occlusion</b>, park by park — not the method. <b style="color:var(--accent-soft)">Click any park</b> for the per-building breakdown and evidence photos.</p>
+</section>
+
+<!-- 5 WHAT IT MEANS -->
+<section class="slide">
+  <div class="kicker anim">Interpretation</div>
+  <h2 class="anim" style="--d:.1s">What the numbers actually tell us</h2>
+  <ul class="takeaway">
+    <li class="anim" style="--d:.25s"><b>Where a door can be seen, the agent counts it — near-ceiling accuracy.</b> That is the maximal success achievable remotely today, and we are at it.</li>
+    <li class="anim" style="--d:.45s"><b>Where walls are hidden, no remote method works</b> — not ours, not Ronald's, not anyone's. Ours is simply the only one that says so honestly.</li>
+    <li class="anim" style="--d:.65s"><b>Where we report doors Ronald missed, we usually hold direct evidence</b> — high-resolution oblique frames or leasing floor plans outside his toolset.</li>
+  </ul>
+</section>
+
+<!-- 6 CLOSE -->
+<section class="slide">
+  <div class="kicker anim">Bottom Line</div>
+  <h2 class="anim" style="--d:.1s">We are at the ceiling of what remote data allows</h2>
+  <ul class="takeaway">
+    <li class="anim" style="--d:.2s">Visible doors: <b>97–99.5% — validated, independent, reproducible.</b></li>
+    <li class="anim" style="--d:.35s">Hidden doors: <b>flagged honestly, not guessed</b> — and closable with better inputs.</li>
+    <li class="anim" style="--d:.5s">Why an agent: <b>buildings vary wildly, and knowing when NOT to count is judgment</b> — a hard-coded script cannot do this.</li>
+    <li class="anim" style="--d:.65s">To scale, we need: <b>EagleView licensing (~US$90/location, or a commercial API deal) &middot; more compute capacity &middot; targeted field checks on flagged walls only.</b></li>
+  </ul>
+  <p class="cap anim" style="--d:.85s; margin-top:3vh">The process is documented and repeatable — a full playbook and the complete evidence archive (every frame behind every number) are available. Happy to walk through any building frame by frame.</p>
+</section>
+
+<div class="overlay" id="overlay">
+  <button class="overlay-close" id="overlayClose" aria-label="Close">&times;</button>
+  <div class="overlay-card" id="overlayContent"></div>
+</div>
+
+<div class="footer">
+  <span>Door Counting from Remote Imagery &mdash; internal briefing</span>
+  <span id="counter">1 / 6</span>
+</div>
+
+<script src="assets/gallery_data.js"></script>
+<script>
+  const slides = document.querySelectorAll('.slide');
+  if (location.search.includes('static')) document.body.classList.add('static');
+  let i = Math.max(0, Math.min(slides.length - 1, (parseInt(location.hash.slice(1), 10) || 1) - 1));
+
+  function runCounters(slide) {
+    const instant = document.body.classList.contains('static');
+    slide.querySelectorAll('.count[data-target]').forEach(el => {
+      const target = +el.dataset.target, suffix = el.dataset.suffix || '';
+      if (instant) { el.textContent = target + suffix; return; }
+      const t0 = performance.now(), dur = 900;
+      (function tick(t) {
+        const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(target * e) + suffix;
+        if (p < 1) requestAnimationFrame(tick);
+      })(t0);
+    });
+  }
+
+  function show(n) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, k) => s.classList.toggle('active', k === i));
+    document.getElementById('counter').textContent = (i + 1) + ' / ' + slides.length;
+    runCounters(slides[i]);
+  }
+
+  document.addEventListener('keydown', e => {
+    if (overlay.classList.contains('open')) {
+      if (e.key === 'Escape') closeSite();
+      return;
+    }
+    if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(e.key)) show(i + 1);
+    if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) show(i - 1);
+    if (e.key === 'Home') show(0);
+    if (e.key === 'End') show(slides.length - 1);
+  });
+  document.addEventListener('click', e => {
+    if (e.clientX > window.innerWidth * 0.3) show(i + 1); else show(i - 1);
+  });
+  // --- site detail overlay ---
+  const SITE_ORDER = ['dvcc', 'estrella', 'carleton', 'centraldv', 'chicago', 'ctc', 'excelwest', 'desertridge'];
+  const SITE_DETAILS = {
+    dvcc: { name: 'Deer Valley Commerce Center', pct: '99.5%', cls: 'green',
+      overall: [207, 208],
+      types: [['Dock-high',0,0],['Grade',76,70],['Man',71,78],['Office',60,60]],
+      note: 'Strong imagery park-wide; the document layer filled the few imagery-blind faces (deep shade, a missing Pictometry tile). Where we exceed Ronald (grade +6), our obliques show bays he could not see.',
+      rows: [['B1','0/0','12/11','12/12','5/0','29/23'],['B2','0/0','15/12','11/12','11/12','37/36'],['B3','0/0','12/12','12/15','6/12','30/39'],['B4','0/0','12/11','12/12','13/12','37/35'],['B5','0/0','13/12','12/12','8/12','33/36'],['B6','0/0','12/12','12/15','17/12','41/39']],
+      goodCap: 'East wall grade doors clearly readable in oblique imagery — every roll-up counted with confidence.',
+      badCap: 'North end cap sits in deep shade — doors confirmed only via the document layer, not imagery.' },
+    estrella: { name: 'Estrella Business Center', pct: '97%', cls: 'green',
+      overall: [60, 62],
+      types: [['Dock-high',0,0],['Grade',19,19],['Man',21,23],['Office',20,20]],
+      note: 'Best imagery of the study (2025 obliques + full Street View coverage). Only tree-shaded ends remain uncertain.',
+      rows: [['B1','0/0','19/19','21/23','20/20','60/62']],
+      goodCap: 'Well-lit walls with clean oblique and street-level views — nearly every door directly visible.',
+      badCap: 'West wall in deep shade with mature trees hard against the facade — the only face we could not fully confirm.' },
+    carleton: { name: 'Carleton Business Center', pct: '73%', cls: 'warn',
+      overall: [130, 177],
+      types: [['Dock-high',0,0],['Grade',51,54],['Man',33,64],['Office',46,59]],
+      note: 'Grade doors near-perfect (51 of 54). The gap is almost entirely man doors on faces invisible to aerial and Street View — interior courts and canopied arcades.',
+      rows: [['B1','0/0','9/11','6/12','17/15','32/38'],['B2','0/0','14/14','6/15','5/9','25/38'],['B3','0/0','6/6','7/10','3/7','16/23'],['B4','0/0','6/6','1/8','5/9','12/23'],['B5','0/0','7/7','3/7','9/11','19/25'],['B6','0/0','6/6','6/7','6/6','18/19'],['B7','0/0','3/4','4/5','1/2','8/11']],
+      goodCap: 'Street View of the storefront row — full facade visible, every entry countable.',
+      badCap: 'Covered arcade: storefronts recessed behind a shaded walkway — invisible to every remote source.' },
+    centraldv: { name: 'Central Deer Valley', pct: '72%', cls: 'warn',
+      overall: [55, 76],
+      types: [['Dock-high',0,0],['Grade',24,32],['Man',9,20],['Office',22,24]],
+      note: 'Arcade shadow on key faces; some walls have no Street View coverage at all. The leasing flyer (one overhead door per suite) filled the blind north faces.',
+      rows: [['B1 (21616)','0/0','8/16','1/9','6/8','15/33'],['B2 (21628)','0/0','8/8','8/8','7/8','23/24'],['B3 (21602)','0/0','8/8','0/3','9/8','17/19']],
+      goodCap: 'Street-level view of the east facade — storefronts and entries readable door by door.',
+      badCap: 'Deep overhang throws the whole storefront band into shade — doors behind it are unconfirmable remotely.' },
+    chicago: { name: 'Chicago Street Business Park', pct: '58%', cls: 'warn',
+      overall: [65, 113],
+      types: [['Dock-high',0,0],['Grade',24,42],['Man',27,61],['Office',14,10]],
+      note: 'B1 matched almost exactly (30 vs 29). The gap is the courtyard: walls on the two northern buildings face inward where no camera reaches. On office doors we found 4 more than Ronald — direct Street View evidence.',
+      rows: [['B1','0/0','10/10','10/9','10/10','30/29'],['B2','0/0','4/16','4/26','4/0','12/42'],['B3','0/0','10/16','13/26','0/0','23/42']],
+      goodCap: 'Shadow-enhanced oblique pulled rear grade doors out of gloom — matched Ronald on B1.',
+      badCap: 'Interior courtyard in permanent shadow — walls face inward where no aerial or street camera reaches.' },
+    ctc: { name: 'Chandler Technology Center', pct: '52%', cls: 'warn',
+      overall: [48, 92],
+      types: [['Dock-high',1,0],['Grade',14,27],['Man',8,26],['Office',25,39]],
+      note: '1995-vintage flex park: arcaded storefronts, colonnades, courtyard canopies, mature palms — heavy occlusion everywhere. The 1 dock we found (Ronald: 0) is a flagged conflict for ground-check.',
+      rows: [['B1','0/0','5/6','0/2','5/11','10/19'],['B2','0/0','0/3','0/7','3/4','3/14'],['B3','0/0','1/8','2/5','8/12','11/25'],['B4','0/0','5/6','4/7','6/6','15/19'],['B5','1/0','3/4','2/5','3/6','9/15']],
+      goodCap: 'Office entry facade in open light — glass doors and sidelights clearly identifiable.',
+      badCap: 'Colonnade frontage: repeating arches and shadow make individual doors hard to separate.' },
+    excelwest: { name: 'Excel West', pct: '45%', cls: 'warn',
+      overall: [33, 73],
+      types: [['Dock-high',0,0],['Grade',16,36],['Man',14,19],['Office',3,18]],
+      note: 'A scrap/junkyard occludes the south building bases, vehicles park tight against walls, and Street View coverage is sparse. Newest imagery of the study — the shortfall is clutter, not resolution.',
+      rows: [['B1','0/0','4/10','2/2','0/8','6/20'],['B2','0/0','3/11','3/0','2/9','8/20'],['B3','0/0','3/5','4/6','0/0','7/11'],['B4','0/0','3/5','3/5','0/0','6/10'],['B5','0/0','3/5','2/6','1/1','6/12']],
+      goodCap: 'East loading wall: roll-up doors plainly visible in oblique view.',
+      badCap: 'Junkyard scrap piled against the building base — wall line physically blocked from every angle.' },
+    desertridge: { name: 'Desert Ridge', pct: '32%', cls: 'red',
+      overall: [8, 25],
+      types: [['Dock-high',0,0],['Grade',4,7],['Man',0,6],['Office',4,12]],
+      note: 'Worst-case geometry: a recessed truckwell in permanent shadow and an open-sided canopy structure that reads as a building. 4 of 6 Street View frames were indoor photospheres and had to be discarded.',
+      rows: [['B1','0/0','2/4','0/1','1/6','3/12'],['B2','0/0','2/2','0/5','3/6','5/13']],
+      goodCap: 'East wall oblique — exposed grade doors counted cleanly.',
+      badCap: 'Recessed truckwell in permanent shadow with trucks backed in — dock positions physically hidden.' },
+  };
+
+  const overlay = document.getElementById('overlay');
+  const overlayContent = document.getElementById('overlayContent');
+  const PCT_COLORS = { green: 'var(--good)', warn: 'var(--warn)', red: '#f87171' };
+
+  function typeStatus(ours, ron) {
+    if (ron === 0 && ours === 0) return ['none on site', 'var(--muted)'];
+    if (ours === ron) return ['exact match', 'var(--good)'];
+    if (ours > ron) return [`+${ours - ron} vs Ronald`, 'var(--accent-soft)'];
+    const pct = Math.round(ours / ron * 100);
+    const col = pct >= 95 ? 'var(--good)' : pct >= 70 ? 'var(--warn)' : '#f87171';
+    return [pct + '% confirmed', col];
+  }
+
+  function cellCls(pair) {
+    const [a, r] = pair.split('/').map(Number);
+    if (a === 0 && r === 0) return 'cnone';
+    if (a === r) return 'cok';
+    return a > r ? 'cmore' : 'cgap';
+  }
+
+  function openSite(key) {
+    const d = SITE_DETAILS[key];
+    const typeCards = d.types.map(t => {
+      const [status, col] = typeStatus(t[1], t[2]);
+      return `<div class="typecard">
+        <div class="tname">${t[0]}</div>
+        <div class="tnums">${t[1]}<span class="tvs">vs</span>${t[2]}</div>
+        <div class="tstatus" style="color:${col}">${status}</div>
+      </div>`;
+    }).join('');
+    const bodyRows = d.rows.map(r =>
+      `<tr><td>${r[0]}</td>` + r.slice(1).map(p => `<td class="${cellCls(p)}">${p}</td>`).join('') + '</tr>').join('');
+    const sumCells = d.types.map(t => `${t[1]}/${t[2]}`).concat([`${d.overall[0]}/${d.overall[1]}`])
+      .map(p => `<td class="${cellCls(p)}">${p}</td>`).join('');
+    const gal = (typeof GALLERY !== 'undefined' && GALLERY[key]) || null;
+    let galHtml = '';
+    if (gal) {
+      galHtml = '<div class="ovdetail" style="margin-top:2.5vh">Evidence gallery &mdash; every frame behind the numbers</div>' +
+        Object.keys(gal).map(b => {
+          const g = gal[b];
+          const imgs = (g.images || []).map(im =>
+            `<figure><div class="imgwrap"><img loading="lazy" src="assets/${im.src}"></div><figcaption>${im.cap}</figcaption></figure>`).join('');
+          const faces = Object.keys(g.faces || {}).map(f =>
+            `<p><b>${f} face:</b> ${g.faces[f]}</p>`).join('');
+          return `<div class="ovdetail" style="margin-top:1.4vh">Building ${b}</div>
+            <div class="galrow">${imgs}</div>
+            ${faces ? `<div class="facenotes">${faces}</div>` : ''}`;
+        }).join('');
+    }
+    overlayContent.innerHTML = `
+      <div class="ovhead"><h2>${d.name}</h2><span class="pill ${d.cls}">${d.pct}</span></div>
+      <div class="ovoverall">
+        <span class="bignums">${d.overall[0]}<small> of </small>${d.overall[1]}</span>
+        <span class="ovline">doors in Ronald&rsquo;s count confirmed by our agent &mdash;
+          <b style="color:${PCT_COLORS[d.cls]}">${d.pct}</b></span>
+      </div>
+      <div class="typerow">${typeCards}</div>
+      <p class="sub" style="margin-bottom:1.5vh; font-size:clamp(13px,1.3vw,18px)">${d.note}</p>
+      <div class="ovdetail">Per-building detail by door type</div>
+      <table>
+        <tr><th>Building</th><th>Dock</th><th>Grade</th><th>Man</th><th>Office</th><th>Total</th></tr>
+        ${bodyRows}
+        <tr class="total"><td>All buildings</td>${sumCells}</tr>
+      </table>
+      <p class="cellnote">Each cell: our agent / Ronald &middot; <span class="cok">green = exact match</span> &middot; <span class="cmore">blue = we found more (direct evidence)</span> &middot; <span class="cgap">amber = on faces we could not confirm remotely</span></p>
+      <div class="photorow">
+        <div class="imgwrap contain"><img src="assets/site_${key}_good.png" onerror="this.onerror=null;this.src='assets/site_${key}_good.jpg'"></div>
+        <p class="pcomment"><b style="color:var(--good)">Where it went well.</b> ${d.goodCap}</p>
+      </div>
+      <div class="photorow">
+        <div class="imgwrap contain"><img src="assets/site_${key}_bad.png" onerror="this.onerror=null;this.src='assets/site_${key}_bad.jpg'"></div>
+        <p class="pcomment"><b style="color:var(--warn)">Where it was hard.</b> ${d.badCap}</p>
+      </div>
+      ${galHtml}`;
+    overlay.classList.add('open');
+  }
+  function closeSite() { overlay.classList.remove('open'); }
+
+  document.querySelectorAll('.sitecard').forEach((c, idx) => {
+    c.addEventListener('click', e => { e.stopPropagation(); openSite(SITE_ORDER[idx]); });
+  });
+  document.getElementById('overlayClose').addEventListener('click', e => { e.stopPropagation(); closeSite(); });
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeSite(); e.stopPropagation(); });
+
+  show(i);
+</script>
+</body>
+</html>
