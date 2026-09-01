@@ -199,7 +199,56 @@
   .facenotes p { color: var(--muted); font-size: clamp(11px, 1vw, 14px); line-height: 1.45; }
   .facenotes p b { color: var(--accent-soft); }
 
-  .static .slide { transition: none; }
+  /* ---- theme system ---- */
+  :root { --red: #f87171; }
+  [data-theme="light"] {
+    --bg: #f5f7fa; --bg-card: #ffffff; --accent: #2563eb; --accent-soft: #1e40af;
+    --text: #17202d; --muted: #5b6b80; --good: #047857; --warn: #b45309;
+    --line: #dde4ee; --red: #dc2626;
+  }
+  [data-theme="light"] .card, [data-theme="light"] .node, [data-theme="light"] .statband .stat,
+  [data-theme="light"] .typecard, [data-theme="light"] .scorebox {
+    box-shadow: 0 2px 14px rgba(15, 23, 42, .07); }
+  [data-theme="light"] .cardimg, [data-theme="light"] .imgwrap, [data-theme="light"] .nimg { background: #0f1722; }
+  [data-theme="light"] .pill.green { background: rgba(4,120,87,.12); }
+  [data-theme="light"] .pill.warn { background: rgba(180,83,9,.12); }
+  [data-theme="light"] .pill.red { background: rgba(220,38,38,.12); color: var(--red) !important; }
+  [data-theme="light"] .card.gray, [data-theme="light"] .node.gray { border-top-color: #94a3b8; }
+  [data-theme="light"] .node.gray { border-left-color: #94a3b8; }
+  [data-theme="light"] .lanehead.gray { color: #475569; border-color: #94a3b8; }
+  [data-theme="light"] .scorebox.gray { border-top-color: #94a3b8; }
+  [data-theme="light"] .scorebox.gray .num { color: #475569; }
+  [data-theme="light"] .overlay-card { background: var(--bg); }
+  [data-theme="light"] .arrow { color: var(--accent); }
+
+  /* subtle ambient glow */
+  body::before { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background: radial-gradient(55vw 55vh at 82% -8%, rgba(59,130,246,.13), transparent 62%); }
+  [data-theme="light"] body::before {
+    background: radial-gradient(55vw 55vh at 82% -8%, rgba(37,99,235,.09), transparent 62%); }
+  .slide { z-index: 1; transition: opacity .5s ease, visibility .5s, transform .5s cubic-bezier(.22,.8,.3,1);
+    transform: translateX(2.2vw); }
+
+  /* ---- chrome: arrows, dots, theme toggle ---- */
+  .navbtn { position: fixed; top: 50%; transform: translateY(-50%); z-index: 40;
+    width: 54px; height: 54px; border-radius: 50%; border: 1px solid var(--line);
+    background: var(--bg-card); color: var(--muted); font-size: 26px; line-height: 1;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all .2s ease; }
+  .navbtn:hover { color: var(--accent); border-color: var(--accent); transform: translateY(-50%) scale(1.08); }
+  #prevBtn { left: 1.8vw; } #nextBtn { right: 1.8vw; }
+  .themetoggle { position: fixed; top: 3vh; right: 3vw; z-index: 40; width: 46px; height: 46px;
+    border-radius: 50%; border: 1px solid var(--line); background: var(--bg-card);
+    color: var(--muted); font-size: 19px; cursor: pointer; transition: all .2s ease; }
+  .themetoggle:hover { color: var(--accent); border-color: var(--accent); }
+  .dots { position: fixed; bottom: 2.7vh; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 9px; z-index: 40; }
+  .dots button { width: 9px; height: 9px; border-radius: 50%; border: none; padding: 0;
+    background: var(--line); cursor: pointer; transition: all .2s ease; }
+  .dots button:hover { background: var(--accent-soft); }
+  .dots button.on { background: var(--accent); transform: scale(1.35); }
+
+  .static .slide { transition: none; transform: none; }
   .static .slide:not(.active) { display: none; }
   .static .slide .anim, .static .slide .arrow { opacity: 1 !important;
     transform: none !important; animation: none !important; }
@@ -210,7 +259,7 @@
       page-break-after: always; height: 100vh; }
     .slide .anim, .slide .arrow { opacity: 1 !important; transform: none !important;
       animation: none !important; }
-    .footer { display: none; }
+    .footer, .navbtn, .dots, .themetoggle { display: none; }
   }
 </style>
 </head>
@@ -386,6 +435,11 @@
   <div class="overlay-card" id="overlayContent"></div>
 </div>
 
+<button class="navbtn" id="prevBtn" aria-label="Previous slide">&#8249;</button>
+<button class="navbtn" id="nextBtn" aria-label="Next slide">&#8250;</button>
+<button class="themetoggle" id="themeToggle" aria-label="Toggle dark / light mode">&#9788;</button>
+<div class="dots" id="dots"></div>
+
 <div class="footer">
   <span>Door Counting from Remote Imagery &mdash; internal briefing</span>
   <span id="counter">1 / 6</span>
@@ -415,6 +469,7 @@
     i = Math.max(0, Math.min(slides.length - 1, n));
     slides.forEach((s, k) => s.classList.toggle('active', k === i));
     document.getElementById('counter').textContent = (i + 1) + ' / ' + slides.length;
+    updateDots();
     runCounters(slides[i]);
   }
 
@@ -494,14 +549,14 @@
 
   const overlay = document.getElementById('overlay');
   const overlayContent = document.getElementById('overlayContent');
-  const PCT_COLORS = { green: 'var(--good)', warn: 'var(--warn)', red: '#f87171' };
+  const PCT_COLORS = { green: 'var(--good)', warn: 'var(--warn)', red: 'var(--red)' };
 
   function typeStatus(ours, ron) {
     if (ron === 0 && ours === 0) return ['none on site', 'var(--muted)'];
     if (ours === ron) return ['exact match', 'var(--good)'];
     if (ours > ron) return [`+${ours - ron} vs Ronald`, 'var(--accent-soft)'];
     const pct = Math.round(ours / ron * 100);
-    const col = pct >= 95 ? 'var(--good)' : pct >= 70 ? 'var(--warn)' : '#f87171';
+    const col = pct >= 95 ? 'var(--good)' : pct >= 70 ? 'var(--warn)' : 'var(--red)';
     return [pct + '% confirmed', col];
   }
 
@@ -575,6 +630,37 @@
   });
   document.getElementById('overlayClose').addEventListener('click', e => { e.stopPropagation(); closeSite(); });
   overlay.addEventListener('click', e => { if (e.target === overlay) closeSite(); e.stopPropagation(); });
+
+  // --- theme toggle (persisted) ---
+  const rootEl = document.documentElement;
+  const themeBtn = document.getElementById('themeToggle');
+  function applyTheme(t) {
+    if (t === 'light') rootEl.dataset.theme = 'light'; else delete rootEl.dataset.theme;
+    themeBtn.innerHTML = t === 'light' ? '&#9789;' : '&#9788;';
+  }
+  applyTheme(localStorage.getItem('deck-theme') === 'light' ? 'light' : 'dark');
+  themeBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    const next = rootEl.dataset.theme === 'light' ? 'dark' : 'light';
+    applyTheme(next);
+    localStorage.setItem('deck-theme', next);
+  });
+
+  // --- arrow buttons ---
+  document.getElementById('prevBtn').addEventListener('click', e => { e.stopPropagation(); show(i - 1); });
+  document.getElementById('nextBtn').addEventListener('click', e => { e.stopPropagation(); show(i + 1); });
+
+  // --- progress dots ---
+  const dotsWrap = document.getElementById('dots');
+  slides.forEach((_, k) => {
+    const b = document.createElement('button');
+    b.setAttribute('aria-label', 'Go to slide ' + (k + 1));
+    b.addEventListener('click', e => { e.stopPropagation(); show(k); });
+    dotsWrap.appendChild(b);
+  });
+  function updateDots() {
+    dotsWrap.querySelectorAll('button').forEach((b, k) => b.classList.toggle('on', k === i));
+  }
 
   show(i);
 </script>
