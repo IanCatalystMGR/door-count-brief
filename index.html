@@ -269,20 +269,6 @@
   .cardlink { color: var(--accent-soft); font-weight: 600;
     font-size: clamp(11px, 1.05vw, 15px); margin-top: .8vh; }
 
-  /* ---- slide 4 bar chart (pure CSS) ---- */
-  .barchart { margin: .4vh 0 1.8vh; }
-  .bar { display: flex; align-items: center; gap: .8vw; margin-bottom: .45vh;
-    font-size: clamp(10px, 1vw, 14px); }
-  .bar .blab { flex: 0 0 17ch; text-align: right; color: var(--muted);
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .bar .btrack { flex: 1; height: 9px; background: var(--line); border-radius: 5px;
-    overflow: hidden; display: block; }
-  .bar .bfill { display: block; height: 100%; border-radius: 5px; }
-  .bar .bfill.green { background: var(--good); }
-  .bar .bfill.warn { background: var(--warn); }
-  .bar .bfill.red { background: var(--red); }
-  .bar .bval { flex: 0 0 5ch; font-weight: 700; font-variant-numeric: tabular-nums; }
-
   /* ---- responsive ---- */
   @media (max-width: 900px) {
     .slide { padding: 3.5vh 5vw 12vh; justify-content: flex-start; }
@@ -302,7 +288,6 @@
     .overlay-card { max-height: 94vh; padding: 2.5vh 4vw; overflow-x: auto; }
     .overlay .imgwrap, .photorow .imgwrap { height: 20vh; }
     .galrow .imgwrap { height: 12vh; }
-    .bar .blab { flex-basis: 10ch; }
     table { font-size: clamp(11px, 2.8vw, 14px); }
   }
   @media (max-width: 560px) {
@@ -434,22 +419,6 @@
 <section class="slide">
   <div class="kicker anim">Site by Site</div>
   <h2 class="anim" style="--d:.1s">Every park vs Ronald — and why the hard ones are hard</h2>
-  <div class="statband anim" style="--d:.15s">
-    <div class="stat"><span class="sbnum"><span class="count" data-target="73" data-suffix="%">0%</span></span><span class="sblab">confirmed overall — 606 of 826 doors in Ronald's count</span></div>
-    <div class="stat"><span class="sbnum" style="color:var(--good)">97–99.5%</span><span class="sblab">on well-imaged buildings, where doors are actually visible</span></div>
-    <div class="stat"><span class="sbnum">81–100%</span><span class="sblab">effective rate including suspected doors on hidden faces</span></div>
-    <div class="stat"><span class="sbnum">8 &middot; 34</span><span class="sblab">business parks &middot; buildings &middot; Phoenix metro</span></div>
-  </div>
-  <div class="barchart anim" style="--d:.18s">
-    <div class="bar"><span class="blab">Deer Valley Commerce</span><span class="btrack"><span class="bfill green" style="width:99.5%"></span></span><span class="bval">99.5%</span></div>
-    <div class="bar"><span class="blab">Estrella</span><span class="btrack"><span class="bfill green" style="width:97%"></span></span><span class="bval">97%</span></div>
-    <div class="bar"><span class="blab">Carleton</span><span class="btrack"><span class="bfill warn" style="width:73%"></span></span><span class="bval">73%</span></div>
-    <div class="bar"><span class="blab">Central Deer Valley</span><span class="btrack"><span class="bfill warn" style="width:72%"></span></span><span class="bval">72%</span></div>
-    <div class="bar"><span class="blab">Chicago Street</span><span class="btrack"><span class="bfill warn" style="width:58%"></span></span><span class="bval">58%</span></div>
-    <div class="bar"><span class="blab">Chandler Tech Center</span><span class="btrack"><span class="bfill warn" style="width:52%"></span></span><span class="bval">52%</span></div>
-    <div class="bar"><span class="blab">Excel West</span><span class="btrack"><span class="bfill warn" style="width:45%"></span></span><span class="bval">45%</span></div>
-    <div class="bar"><span class="blab">Desert Ridge</span><span class="btrack"><span class="bfill red" style="width:32%"></span></span><span class="bval">32%</span></div>
-  </div>
   <div class="grid four sites">
     <button type="button" class="card sitecard anim" style="--d:.2s">
       <div class="cardimg site"><img loading="lazy" src="assets/site_dvcc.webp" alt="Deer Valley Commerce Center"></div>
@@ -512,24 +481,6 @@
     <li class="anim" style="--d:.45s"><b>Where walls are hidden, no remote method works</b> — not ours, not Ronald's, not anyone's. Ours is simply the only one that says so honestly.</li>
     <li class="anim" style="--d:.65s"><b>Where we report doors Ronald missed, we usually hold direct evidence</b> — high-resolution oblique frames or leasing floor plans outside his toolset.</li>
   </ul>
-</section>
-
-<!-- 6 CLOSE -->
-<section class="slide">
-  <div class="kicker anim">Bottom Line</div>
-  <h2 class="anim" style="--d:.1s">We are at the ceiling of what remote data allows</h2>
-  <ul class="takeaway">
-    <li class="anim" style="--d:.2s">Visible doors: <b>97–99.5% — validated, independent, reproducible.</b></li>
-    <li class="anim" style="--d:.35s">Hidden doors: <b>flagged honestly, not guessed</b> — and closable with better inputs.</li>
-    <li class="anim" style="--d:.5s">Why an agent: <b>buildings vary wildly, and knowing when NOT to count is judgment</b> — a hard-coded script cannot do this.</li>
-  </ul>
-  <p class="cap anim" style="--d:.65s; margin-top:2.5vh">To scale, we need:</p>
-  <div class="grid three anim" style="--d:.7s; margin-top:1vh">
-    <div class="card blue"><h3>EagleView licensing</h3><p>~US$90/location, or a commercial API deal.</p></div>
-    <div class="card blue"><h3>More compute capacity</h3><p>Enough capacity to run the pipeline at scale.</p></div>
-    <div class="card blue"><h3>Targeted field checks</h3><p>On flagged walls only — not blanket site visits.</p></div>
-  </div>
-  <p class="cap anim" style="--d:.85s; margin-top:3vh">The process is documented and repeatable — a full playbook and the complete evidence archive (every frame behind every number) are available. Happy to walk through any building frame by frame.</p>
 </section>
 
 <div class="overlay" id="overlay">
