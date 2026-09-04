@@ -4,15 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Door Counting from Remote Imagery — Executive Briefing</title>
-<meta name="description" content="Executive briefing: counting doors from remote imagery across 10 Phoenix-metro business parks — 54 buildings, 1003 doors, validated blind against an independent benchmark, with 97–99.5% accuracy where doors are visible.">
+<meta name="description" content="Executive briefing: counting doors from remote imagery across 11 Phoenix-metro business parks — 56 buildings, 1065 doors, validated blind against an independent benchmark, with 97–99.5% accuracy where doors are visible.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Door Counting from Remote Imagery — Executive Briefing">
-<meta property="og:description" content="What we built, how we validated it, and what the accuracy numbers really mean — 10 business parks, 54 buildings, 1003 doors, Phoenix metro.">
+<meta property="og:description" content="What we built, how we validated it, and what the accuracy numbers really mean — 11 business parks, 56 buildings, 1065 doors, Phoenix metro.">
 <meta property="og:url" content="https://iancatalystmgr.github.io/door-count-brief/">
 <meta property="og:image" content="https://iancatalystmgr.github.io/door-count-brief/assets/site_dvcc.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Door Counting from Remote Imagery — Executive Briefing">
-<meta name="twitter:description" content="10 business parks · 54 buildings · 1003 doors — validated blind against an independent benchmark; 97–99.5% accuracy where doors are visible.">
+<meta name="twitter:description" content="11 business parks · 56 buildings · 1065 doors — validated blind against an independent benchmark; 97–99.5% accuracy where doors are visible.">
 <meta name="twitter:image" content="https://iancatalystmgr.github.io/door-count-brief/assets/site_dvcc.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2312161c'/%3E%3Crect x='23' y='11' width='18' height='42' rx='2' fill='none' stroke='%233b82f6' stroke-width='4'/%3E%3Ccircle cx='37' cy='33' r='3' fill='%233b82f6'/%3E%3C/svg%3E">
 <style>
@@ -330,11 +330,11 @@
   <h1 class="anim" style="--d:.15s">Door Counting from Remote Imagery</h1>
   <div class="rule anim" style="--d:.3s"></div>
   <p class="sub anim" style="--d:.45s">What we built, how we validated it, and what the accuracy numbers really mean.<br>
-  10 business parks &middot; 54 buildings &middot; 1003 doors &middot; Phoenix metro</p>
+  11 business parks &middot; 56 buildings &middot; 1065 doors &middot; Phoenix metro</p>
   <div class="statband three anim" style="--d:.6s; margin-top:4vh">
-    <div class="stat"><span class="sbnum">72%</span><span class="sblab">confirmed overall — 721 of 1003 doors in Ronald's count</span></div>
+    <div class="stat"><span class="sbnum">70%</span><span class="sblab">confirmed overall — 744 of 1065 doors in Ronald's count</span></div>
     <div class="stat"><span class="sbnum" style="color:var(--good)">97–99.5%</span><span class="sblab">on well-imaged buildings, where doors are actually visible</span></div>
-    <div class="stat"><span class="sbnum">10 &middot; 54</span><span class="sblab">business parks &middot; buildings &middot; Phoenix metro</span></div>
+    <div class="stat"><span class="sbnum">11 &middot; 56</span><span class="sblab">business parks &middot; buildings &middot; Phoenix metro</span></div>
   </div>
 </section>
 
@@ -347,7 +347,7 @@
       <h3>Dock-high</h3>
       <p>Raised loading dock: levelers, bumpers, truckwell. For semi-trailers backing in.</p>
       <div class="cardimg"><img src="assets/dock_reference.jpg" alt="Dock-high loading door reference photo"></div>
-      <p class="imgcap">Reference photo (public domain, Wikimedia Commons) — raised sill, leveler, dock seals. None of the 10 parks had a true dock-high door; this is what the pipeline tests for.</p>
+      <p class="imgcap">Reference photo (public domain, Wikimedia Commons) — raised sill, leveler, dock seals. Dock-high doors are rare in this portfolio — this is what the pipeline tests for.</p>
     </div>
     <div class="card blue anim" style="--d:.32s">
       <h3>Grade-level OH</h3>
@@ -412,7 +412,7 @@
       </div>
     </div>
   </div>
-  <div class="card green anim" style="--d:1.8s; margin-top:1.5vh"><h3>Same walls, same kind of data — the difference is behaviour</h3><p>Both sides counted all 10 parks <b>independently and blind</b> — one benchmark, no peeking. Every wall of ours gets a verdict: <b style="color:var(--good)">CONFIRMED</b> from evidence or <b style="color:var(--warn)">FLAGGED</b>, never guessed. Ronald estimates hidden walls into his total — so our confirmed count is measured against a benchmark that partly consists of estimates.</p></div>
+  <div class="card green anim" style="--d:1.8s; margin-top:1.5vh"><h3>Same walls, same kind of data — the difference is behaviour</h3><p>Both sides counted all 11 parks <b>independently and blind</b> — one benchmark, no peeking. Every wall of ours gets a verdict: <b style="color:var(--good)">CONFIRMED</b> from evidence or <b style="color:var(--warn)">FLAGGED</b>, never guessed. Ronald estimates hidden walls into his total — so our confirmed count is measured against a benchmark that partly consists of estimates.</p></div>
 </section>
 
 <!-- 4 SITE BY SITE -->
@@ -454,6 +454,12 @@
       <div class="cardimg site"><img loading="lazy" src="assets/site_fiesta.webp" alt="Fiesta Center"></div>
       <h3>Fiesta Center <span class="pill warn sm">60%</span></h3>
       <p>73/122 confirmed. Storefront-arcade office-flex: entries resolved via Street View + the leasing site plan; service-wall doors stay hard.</p>
+      <p class="cardlink">View breakdown &rarr;</p>
+    </button>
+    <button type="button" class="card sitecard anim" style="--d:.58s">
+      <div class="cardimg site"><img loading="lazy" src="assets/site_fiestaranch.webp" alt="Fiesta Ranch Business Center"></div>
+      <h3>Fiesta Ranch <span class="pill red sm">42%</span></h3>
+      <p>26/62 confirmed. Rear service walls count cleanly where alleys are drivable (9 of 10 grade on B2); shaded storefront arcades and a semi-blocked west cap hold the rest.</p>
       <p class="cardlink">View breakdown &rarr;</p>
     </button>
     <button type="button" class="card sitecard anim" style="--d:.6s">
@@ -571,7 +577,7 @@
     if (e.clientX > window.innerWidth * 0.3) show(i + 1); else show(i - 1);
   });
   // --- site detail overlay ---
-  const SITE_ORDER = ['dvcc', 'estrella', 'falconfield', 'carleton', 'centraldv', 'fiesta', 'chicago', 'ctc', 'excelwest', 'desertridge'];
+  const SITE_ORDER = ['dvcc', 'estrella', 'falconfield', 'carleton', 'centraldv', 'fiesta', 'fiestaranch', 'chicago', 'ctc', 'excelwest', 'desertridge'];
   const SITE_DETAILS = {
     dvcc: { name: 'Deer Valley Commerce Center', pct: '99.5%', cls: 'green',
       overall: [207, 208],
@@ -608,6 +614,13 @@
       rows: [['B1 (8-25)','0/0','6/17','4/17','17/24','27/58'],['B2 (50-59)','0/3','0/5','2/5','11/5','13/18'],['B3 (40-49)','0/0','2/4','2/5','4/2','8/11'],['B4 (1-7)','0/0','0/2','1/14','10/6','11/22'],['B5 (30-31)','0/0','1/2','0/1','3/2','4/5'],['B6 (29)','0/0','3/1','2/1','2/1','7/3'],['B7 (32)','0/0','0/1','3/3','0/1','3/5']],
       goodCap: 'May 2024 Street View of B1\u2019s east service court: five roll-up grade doors in a row, plainly countable — invisible as anything but shadow in the aerials.',
       badCap: 'B4\u2019s Baseline-facing arcade from the air: a full storefront colonnade reduced to a shaded band behind mature pines — resolved only via the leasing site plan and ground photos.' },
+    fiestaranch: { name: 'Fiesta Ranch Business Ctr', pct: '42%', cls: 'red',
+      overall: [26, 62],
+      types: [['Dock-high',1,0],['Grade',11,20],['Man',8,20],['Office',6,22]],
+      note: 'Two flex buildings flanking a parking court. Where alleys are drivable we are strong — 9 of Ronald\u2019s 10 rear grade doors on B2, counted door by door from the 2019 alley drive. The gap: shaded/tinted storefront arcades on the court faces, a west cap blocked by a parked semi in the only Street View pass, and flyer PDFs behind CDN bot-walls — Ronald\u2019s suite-rhythm estimates fill exactly those walls.',
+      rows: [['B1 (1015)','1/0','2/10','2/10','3/11','8/31'],['B2 (1025)','0/0','9/10','6/10','3/11','18/31']],
+      goodCap: 'B2 rear alley (Mar 2019 Street View): roll-up grade doors with their blue man doors beside them, countable one by one — 9 of Ronald\u2019s 10 grade on this wall.',
+      badCap: 'B2\u2019s McQueen-facing west cap, Oct 2025: a parked semi and dump trailer block the entire wall in the only coverage pass — the storefront behind it stays flagged, not guessed.' },
     chicago: { name: 'Chicago Street Business Park', pct: '58%', cls: 'warn',
       overall: [65, 113],
       types: [['Dock-high',0,0],['Grade',24,42],['Man',27,61],['Office',14,10]],
