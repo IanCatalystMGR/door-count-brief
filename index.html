@@ -332,7 +332,7 @@
   <p class="sub anim" style="--d:.45s">What we built, how we validated it, and what the accuracy numbers really mean.<br>
   9 business parks &middot; 47 buildings &middot; 881 doors &middot; Phoenix metro</p>
   <div class="statband three anim" style="--d:.6s; margin-top:4vh">
-    <div class="stat"><span class="sbnum">72%</span><span class="sblab">confirmed overall — 630 of 881 doors in Ronald's count</span></div>
+    <div class="stat"><span class="sbnum">74%</span><span class="sblab">confirmed overall — 648 of 881 doors in Ronald's count</span></div>
     <div class="stat"><span class="sbnum" style="color:var(--good)">97–99.5%</span><span class="sblab">on well-imaged buildings, where doors are actually visible</span></div>
     <div class="stat"><span class="sbnum">9 &middot; 47</span><span class="sblab">business parks &middot; buildings &middot; Phoenix metro</span></div>
   </div>
@@ -432,6 +432,12 @@
       <p>60/62 confirmed. Best imagery of the study; only tree-shaded ends uncertain.</p>
       <p class="cardlink">View breakdown &rarr;</p>
     </button>
+    <button type="button" class="card sitecard anim" style="--d:.35s">
+      <div class="cardimg site"><img loading="lazy" src="assets/site_falconfield.webp" alt="Falcon Field Industrial"></div>
+      <h3>Falcon Field <span class="pill warn sm">76%</span></h3>
+      <p>42/55 confirmed. Street View escalation saw walls the aerials couldn't; the rest hide behind screen walls and parked vehicles.</p>
+      <p class="cardlink">View breakdown &rarr;</p>
+    </button>
     <button type="button" class="card sitecard anim" style="--d:.4s">
       <div class="cardimg site"><img loading="lazy" src="assets/site_carleton.webp" alt="Carleton Business Center"></div>
       <h3>Carleton <span class="pill warn sm">73%</span></h3>
@@ -460,12 +466,6 @@
       <div class="cardimg site"><img loading="lazy" src="assets/site_excelwest.webp" alt="Excel West"></div>
       <h3>Excel West <span class="pill warn sm">45%</span></h3>
       <p>33/73 confirmed. Junkyard and vehicles parked tight against walls; sparse Street View.</p>
-      <p class="cardlink">View breakdown &rarr;</p>
-    </button>
-    <button type="button" class="card sitecard anim" style="--d:.85s">
-      <div class="cardimg site"><img loading="lazy" src="assets/site_falconfield.webp" alt="Falcon Field Industrial"></div>
-      <h3>Falcon Field <span class="pill warn sm">44%</span></h3>
-      <p>24/55 confirmed. Aerial-only pass: the oblique viewer never returned east-facing frames, so east walls stay flagged, not guessed.</p>
       <p class="cardlink">View breakdown &rarr;</p>
     </button>
     <button type="button" class="card sitecard anim" style="--d:.9s">
@@ -565,7 +565,7 @@
     if (e.clientX > window.innerWidth * 0.3) show(i + 1); else show(i - 1);
   });
   // --- site detail overlay ---
-  const SITE_ORDER = ['dvcc', 'estrella', 'carleton', 'centraldv', 'chicago', 'ctc', 'excelwest', 'falconfield', 'desertridge'];
+  const SITE_ORDER = ['dvcc', 'estrella', 'falconfield', 'carleton', 'centraldv', 'chicago', 'ctc', 'excelwest', 'desertridge'];
   const SITE_DETAILS = {
     dvcc: { name: 'Deer Valley Commerce Center', pct: '99.5%', cls: 'green',
       overall: [207, 208],
@@ -616,13 +616,13 @@
       rows: [['B1','0/0','4/10','2/2','0/8','6/20'],['B2','0/0','3/11','3/0','2/9','8/20'],['B3','0/0','3/5','4/6','0/0','7/11'],['B4','0/0','3/5','3/5','0/0','6/10'],['B5','0/0','3/5','2/6','1/1','6/12']],
       goodCap: 'East loading wall: roll-up doors plainly visible in oblique view.',
       badCap: 'Junkyard scrap piled against the building base — wall line physically blocked from every angle.' },
-    falconfield: { name: 'Falcon Field Industrial', pct: '44%', cls: 'warn',
-      overall: [24, 55],
-      types: [['Dock-high',0,0],['Grade',9,26],['Man',13,12],['Office',2,17]],
-      note: 'Aerial-only pass — no Street View or document layers were used on this park, and the Pictometry viewer returned duplicate south frames for most east-facing captures, so east walls were never imaged. Every unimaged face is flagged VERIFY, not estimated. Where walls were imaged we matched or beat the benchmark (man doors 13 vs 12).',
-      rows: [['B1','0/0','1/3','1/2','0/0','2/5'],['B2','0/0','2/3','1/0','0/2','3/5'],['B3','0/0','0/2','2/0','2/3','4/5'],['B4','0/0','2/2','1/1','0/1','3/4'],['B5','0/0','0/2','0/1','0/3','0/6'],['B6','0/0','0/1','1/2','0/1','1/4'],['B7','0/0','2/1','0/1','0/1','2/3'],['B8','0/0','2/2','2/1','0/1','4/4'],['B9','0/0','0/2','1/1','0/1','1/4'],['B10','0/0','0/2','0/1','0/1','0/4'],['B11','0/0','0/2','2/1','0/1','2/4'],['B12','0/0','0/2','1/1','0/1','1/4'],['B13','0/0','0/2','1/0','0/1','1/3']],
-      goodCap: 'B8 north wall: two grade doors and a man door read cleanly in the oblique — counted with confidence, exact match with the benchmark on this building.',
-      badCap: 'Mature trees hard against the facades, and for 11 of 13 buildings the east-facing capture never arrived — those walls stay flagged, not guessed.' },
+    falconfield: { name: 'Falcon Field Industrial', pct: '76%', cls: 'warn',
+      overall: [42, 55],
+      types: [['Dock-high',0,0],['Grade',17,26],['Man',23,12],['Office',2,17]],
+      note: 'Two-pass count: Jan 2024 obliques, then Dec 2024 Street View escalation on every unconfirmed face. We beat the benchmark on man doors (23 vs 12) — Street View saw walls hidden behind carports that were removed between imagery vintages. The remaining gap is office storefronts: most sit behind masonry screen walls, fenced yards and parked RVs no remote source penetrates.',
+      rows: [['B1','0/0','1/3','2/2','0/0','3/5'],['B2','0/0','2/3','1/0','0/2','3/5'],['B3','0/0','2/2','3/0','2/3','7/5'],['B4','0/0','2/2','2/1','0/1','4/4'],['B5','0/0','2/2','2/1','0/3','4/6'],['B6','0/0','0/1','1/2','0/1','1/4'],['B7','0/0','2/1','0/1','0/1','2/3'],['B8','0/0','2/2','2/1','0/1','4/4'],['B9','0/0','0/2','2/1','0/1','2/4'],['B10','0/0','0/2','0/1','0/1','0/4'],['B11','0/0','2/2','4/1','0/1','6/4'],['B12','0/0','2/2','2/1','0/1','4/4'],['B13','0/0','0/2','2/0','0/1','2/3']],
+      goodCap: 'Dec 2024 Street View on B11\u2019s yard-facing north wall: two roll-up doors and a man door, clearly readable — a wall the Jan 2024 obliques showed only as shadow behind a fence.',
+      badCap: 'Mature trees and screen walls hide wall bases (here B2\u2019s south end); B10 and B6 are worse — wall bases behind masonry screens and parked RVs stay flagged, not guessed.' },
     desertridge: { name: 'Desert Ridge', pct: '32%', cls: 'red',
       overall: [8, 25],
       types: [['Dock-high',0,0],['Grade',4,7],['Man',0,6],['Office',4,12]],
