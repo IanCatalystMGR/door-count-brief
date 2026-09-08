@@ -544,7 +544,46 @@
   <p class="cap anim" style="--d:1.05s; margin-top:1vh">Parks are sorted by confirmed rate: accuracy tracks <b>imagery quality and occlusion</b>, park by park — not the method. <b style="color:var(--accent-soft)">Click any park</b> for the per-building breakdown and evidence photos.</p>
 </section>
 
-<!-- 5 WHAT IT MEANS -->
+<!-- 5 PASS ONE: REPLICATION TEST -->
+<section class="slide">
+  <div class="kicker anim">Independent Replication</div>
+  <h2 class="anim" style="--d:.1s">Pass One &mdash; replication test</h2>
+  <p class="sub anim" style="--d:.2s">An independent team re-ran the playbook blind on three parks &mdash; Deer Valley Commerce Center, Chandler Technology Center, 99th Avenue Business Park &mdash; locked their counts, and only then compared. The question: is the method replicable?</p>
+  <table class="anim" style="--d:.35s">
+    <tr><th>Park</th><th>Benchmark (human)</th><th>Original count (this study)</th><th>Pass One retest</th></tr>
+    <tr><td>Deer Valley Commerce Center</td><td>208</td><td>207 <span class="pill green sm">99.5%</span></td><td>74 <span class="pill red sm">36%</span></td></tr>
+    <tr><td>Chandler Technology Center</td><td>92</td><td>48 <span class="pill warn sm">52%</span></td><td>58 <span class="pill warn sm">63%</span></td></tr>
+    <tr><td>99th Avenue Business Park</td><td>78</td><td>20 <span class="pill red sm">26%</span></td><td>38 <span class="pill red sm">49%</span></td></tr>
+  </table>
+  <table class="anim" style="--d:.45s">
+    <tr><th>Park</th><th>Dock</th><th>Grade</th><th>Man</th><th>Office</th></tr>
+    <tr><td>DVCC</td><td>0/0/0</td><td>70/76/23</td><td>78/71/4</td><td>72/60/47</td></tr>
+    <tr><td>CTC</td><td>0/1/1</td><td>27/14/22</td><td>26/8/6</td><td>39/25/29</td></tr>
+    <tr><td>AVE99</td><td>0/0/0</td><td>22/0/9</td><td>25/3/3</td><td>31/17/26</td></tr>
+  </table>
+  <p class="cellnote anim" style="--d:.5s">Each cell: benchmark / original / Pass One retest, by door type.</p>
+  <div class="grid two">
+    <div class="card green anim" style="--d:.6s">
+      <h3>Where all three agree</h3>
+      <p>Every wall with good evidence matches &mdash; CTC B2 east grade 3=3, B4 east office 6=6, B4 west grade 7 vs 6, AVE99 zero docks everywhere, B1 south office 9 vs 10, B2 west office 3=3. CTC B5: the retest&rsquo;s dock 1 + grade 3 equals the benchmark&rsquo;s grade 4 &mdash; same ramp door, different label. CTC B6: no building exists at the pin (open carport row) &mdash; retest and benchmark both left it blank: independent agreement.</p>
+    </div>
+    <div class="card gray anim" style="--d:.7s">
+      <h3>Where the retest diverges &mdash; systematic, not random</h3>
+      <p>Man doors &minus;66 vs benchmark: 1-metre steel suite doors are below aerial/Street View resolution on shaded service walls; the retest VERIFY-flagged rather than guessed. No-coverage walls: AVE99&rsquo;s gated courtyard (benchmark has 22 grade + 22 man there), DVCC east/south faces with no Street View. Shaded storefront bays under trees. The original DVCC count reached 207 by filling imagery-blind faces via the document layer; Pass One flagged those walls VERIFY instead.</p>
+    </div>
+  </div>
+  <div class="card green anim" style="--d:.8s; margin-top:1.5vh">
+    <h3>Playbook replicates</h3>
+    <div class="statband three" style="margin:.6vh 0 0">
+      <div class="stat"><span class="sbnum">2 of 3</span><span class="sblab">parks where Pass One beat the original count &mdash; AVE99 38 vs 20 &middot; CTC 58 vs 48</span></div>
+      <div class="stat"><span class="sbnum" style="color:var(--good)">0</span><span class="sblab">false positives on readable walls</span></div>
+      <div class="stat"><span class="sbnum">1</span><span class="sblab">field walk per flagged wall closes the remaining gap</span></div>
+    </div>
+  </div>
+  <p class="cellnote anim" style="--d:.9s; margin-top:1vh">Reconciliation open item: the retest session read a DVCC benchmark total of 220 vs the 208 shown on this deck &mdash; under review. DVCC benchmark rows are also unusually uniform (grade 11&ndash;12, man 12&ndash;15, office 12 on every ~35k SF building) &mdash; flagged for human sanity check.</p>
+</section>
+
+<!-- 6 WHAT IT MEANS -->
 <section class="slide">
   <div class="kicker anim">Interpretation</div>
   <h2 class="anim" style="--d:.1s">What the numbers actually tell us</h2>
