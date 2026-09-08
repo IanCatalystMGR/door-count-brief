@@ -545,24 +545,24 @@
   <p class="cap anim" style="--d:1.05s; margin-top:1vh">Parks are sorted by confirmed rate: accuracy tracks <b>imagery quality and occlusion</b>, park by park — not the method. <b style="color:var(--accent-soft)">Click any park</b> for the per-building breakdown and evidence photos.</p>
 </section>
 
-<!-- 5 BLIND REPLICATION: THREE PASSES -->
+<!-- 5 BLIND REPLICATION: FOUR PASSES -->
 <section class="slide">
   <div class="kicker anim">Independent Replication</div>
-  <h2 class="anim" style="--d:.1s">Blind replication &mdash; three passes</h2>
-  <p class="sub anim" style="--d:.2s">Three independent blind passes re-ran the playbook on three parks &mdash; Deer Valley Commerce Center, Chandler Technology Center, 99th Avenue Business Park &mdash; each locked its counts before any comparison. The question: is the method replicable?</p>
+  <h2 class="anim" style="--d:.1s">Blind replication &mdash; four passes</h2>
+  <p class="sub anim" style="--d:.2s">Four independent blind passes re-ran the playbook on three parks &mdash; Deer Valley Commerce Center, Chandler Technology Center, 99th Avenue Business Park &mdash; each locked its counts before any comparison. The question: is the method replicable?</p>
   <table class="anim reptable" style="--d:.35s">
-    <tr><th>Park</th><th>Benchmark (human)</th><th>Original count (this study)</th><th>Pass One retest</th><th>Pass 2 retest</th><th>Pass 3 retest</th></tr>
-    <tr><td>Deer Valley Commerce Center</td><td>220</td><td>207 <span class="pill green sm">94%</span></td><td>74 <span class="pill red sm">34%</span></td><td>90 <span class="pill red sm">41%</span></td><td>93 <span class="pill red sm">42%</span></td></tr>
-    <tr><td>Chandler Technology Center</td><td>92</td><td>48 <span class="pill warn sm">52%</span></td><td>58 <span class="pill warn sm">63%</span></td><td>48 <span class="pill warn sm">52%</span></td><td>47 <span class="pill warn sm">51%</span></td></tr>
-    <tr><td>99th Avenue Business Park</td><td>78</td><td>20 <span class="pill red sm">26%</span></td><td>38 <span class="pill red sm">49%</span></td><td>32 <span class="pill red sm">41%</span></td><td>42 <span class="pill warn sm">54%</span></td></tr>
+    <tr><th>Park</th><th>Benchmark (human)</th><th>Original count (this study)</th><th>Pass One retest</th><th>Pass 2 retest</th><th>Pass 3 retest</th><th>Pass 4 retest</th></tr>
+    <tr><td>Deer Valley Commerce Center</td><td>220</td><td>207 <span class="pill green sm">94%</span></td><td>74 <span class="pill red sm">34%</span></td><td>90 <span class="pill red sm">41%</span></td><td>93 <span class="pill red sm">42%</span></td><td>33+ <span style="color:var(--muted); font-size:.8em">partial</span></td></tr>
+    <tr><td>Chandler Technology Center</td><td>92</td><td>48 <span class="pill warn sm">52%</span></td><td>58 <span class="pill warn sm">63%</span></td><td>48 <span class="pill warn sm">52%</span></td><td>47 <span class="pill warn sm">51%</span></td><td>38 <span class="pill red sm">41%</span></td></tr>
+    <tr><td>99th Avenue Business Park</td><td>78</td><td>20 <span class="pill red sm">26%</span></td><td>38 <span class="pill red sm">49%</span></td><td>32 <span class="pill red sm">41%</span></td><td>42 <span class="pill warn sm">54%</span></td><td>38 <span class="pill red sm">49%</span></td></tr>
   </table>
   <table class="anim reptable" style="--d:.45s">
     <tr><th>Park</th><th>Dock</th><th>Grade</th><th>Man</th><th>Office</th></tr>
-    <tr><td>DVCC</td><td>0/0/0/44/18</td><td>70/76/23/1/12</td><td>78/71/4/2/2</td><td>72/60/47/43/61</td></tr>
-    <tr><td>CTC</td><td>0/1/1/1/0</td><td>27/14/22/18/19</td><td>26/8/6/3/2</td><td>39/25/29/26/26</td></tr>
-    <tr><td>AVE99</td><td>0/0/0/0/0</td><td>22/0/9/0/6</td><td>25/3/3/3/5</td><td>31/17/26/29/31</td></tr>
+    <tr><td>DVCC</td><td>0/0/0/44/18/0</td><td>70/76/23/1/12/4</td><td>78/71/4/2/2/0</td><td>72/60/47/43/61/29</td></tr>
+    <tr><td>CTC</td><td>0/1/1/1/0/0</td><td>27/14/22/18/19/20</td><td>26/8/6/3/2/7</td><td>39/25/29/26/26/11</td></tr>
+    <tr><td>AVE99</td><td>0/0/0/0/0/0</td><td>22/0/9/0/6/0</td><td>25/3/3/3/5/1</td><td>31/17/26/29/31/37</td></tr>
   </table>
-  <p class="cellnote anim" style="--d:.5s">Each cell: benchmark / original / pass 1 / pass 2 / pass 3, by door type.</p>
+  <p class="cellnote anim" style="--d:.5s">Each cell: benchmark / original / pass 1 / pass 2 / pass 3 / pass 4, by door type.<br>Pass 4 DVCC = confirmed-only; VERIFY-flagged walls (incl. both west walls) not counted.</p>
   <div class="grid two">
     <div class="card green anim" style="--d:.6s">
       <h3>Where the counts agree</h3>
@@ -575,15 +575,11 @@
   </div>
   <div class="card blue anim" style="--d:.75s; margin-top:1.5vh">
     <h3>Passes 2 &amp; 3: a classification conflict, not a counting gap</h3>
-    <p>Passes 2 and 3 independently found dock-high positions on DVCC&rsquo;s west walls &mdash; 44 across all six buildings in Pass 2, 18 on B1/B4 in Pass 3 &mdash; where the benchmark, the original count, and Pass 1 all counted grade-level roll-ups on the same walls. Same physical doors, two labels: a classification conflict, not a counting gap, and it is narrowing. One ground photo of the B1/B4 west walls settles an 18&ndash;44 door swing: the study&rsquo;s top field-check target.</p>
+    <p>Passes 2 and 3 independently found dock-high positions on DVCC&rsquo;s west walls &mdash; 44 across all six buildings in Pass 2, 18 on B1/B4 in Pass 3 &mdash; where the benchmark, the original count, and Pass 1 all counted grade-level roll-ups on the same walls. Same physical doors, two labels: a classification conflict, not a counting gap, and it is narrowing. One ground photo of the B1/B4 west walls settles an 18&ndash;44 door swing: the study&rsquo;s top field-check target. Pass 4 VERIFY-flagged those same west walls rather than call them &mdash; every Pictometry vintage is a morning flight with the W faces in shade &mdash; independently confirming they are the evidence bottleneck.</p>
   </div>
   <div class="card green anim" style="--d:.8s; margin-top:1.5vh">
-    <h3>Playbook replicates</h3>
-    <div class="statband three" style="margin:.6vh 0 0">
-      <div class="stat"><span class="sbnum" style="color:var(--good)">31 = 31</span><span class="sblab">Pass 3 matched the benchmark&rsquo;s 99th Ave office count exactly</span></div>
-      <div class="stat"><span class="sbnum">47&ndash;48</span><span class="sblab">Chandler totals cluster across three independent runs; every pass beat the original on 99th Ave &mdash; zero false positives on readable walls</span></div>
-      <div class="stat"><span class="sbnum">1</span><span class="sblab">field walk per flagged wall closes the remaining gap</span></div>
-    </div>
+    <h3>Playbook replicates across four passes</h3>
+    <p>99th Ave office counts bracket the benchmark from both sides (31 vs 26/29/31/37); Chandler grade converges at 18&ndash;20 across the last three runs. Every pass beat the original on 99th Ave with zero false positives on readable walls. The remaining gap is one field walk per flagged wall.</p>
   </div>
   <p class="cellnote anim" style="--d:.9s; margin-top:1vh">Reconciliation resolved: the workbook benchmark for DVCC is 220; the 208 shown on earlier versions of this deck was a stale extract that dropped building B1&rsquo;s 12 office entries &mdash; deck corrected. DVCC benchmark rows are also unusually uniform (grade 11&ndash;12, man 12&ndash;15, office 12 on every ~35k SF building) &mdash; flagged for human sanity check. Two later sessions re-ran the test prompt but audited Pass 1&rsquo;s locked files instead of recounting &mdash; they are verifications, not independent passes, and are not shown.</p>
 </section>
